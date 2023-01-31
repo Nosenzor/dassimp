@@ -1,4 +1,4 @@
-### Why dassimp ??###
+### Why dassimp ?? ###
 This library is a fork of the wonderful Assimp library.
 The goal here is to have an Assimp clone that supposrt double precision by default hence dassimp name.
 
