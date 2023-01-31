@@ -56,7 +56,7 @@ IF(ASSIMP_HUNTER_ENABLED)
   add_definitions(-DASSIMP_USE_HUNTER)
 ENDIF()
 
-PROJECT(Assimp VERSION 5.2.5)
+PROJECT(DAssimp VERSION 5.2.5)
 
 # All supported options ###############################################
 
@@ -70,7 +70,7 @@ OPTION( ASSIMP_BUILD_FRAMEWORK
 )
 OPTION( ASSIMP_DOUBLE_PRECISION
   "Set to ON to enable double precision processing"
-  OFF
+  ON
 )
 OPTION( ASSIMP_OPT_BUILD_PACKAGES
   "Set to ON to generate CPack configuration files and packaging targets"
