@@ -1,3 +1,11 @@
+### Why dassimp ??###
+This library is a fork of the wonderful Assimp library.
+The goal here is to have an Assimp clone that supposrt double precision by default hence dassimp name.
+
+This fork is a solution for vcpkg and conan that can't support the double precision because it changes the API and can break libraries depending on assimp single precision (float).
+
+**Any issues should be forwarded to the main assimp repo**
+
 Open Asset Import Library (assimp)
 ==================================
 A library to import and export various 3d-model-formats including scene-post-processing to generate missing render data.
