@@ -72,6 +72,7 @@ OPTION( ASSIMP_DOUBLE_PRECISION
   "Set to ON to enable double precision processing"
   ON
 )
+set(ASSIMP_DOUBLE_PRECISION ON)
 OPTION( ASSIMP_OPT_BUILD_PACKAGES
   "Set to ON to generate CPack configuration files and packaging targets"
   OFF
@@ -98,7 +99,7 @@ OPTION ( ASSIMP_BUILD_SAMPLES
 )
 OPTION ( ASSIMP_BUILD_TESTS
   "If the test suite for Assimp is built in addition to the library."
-  ON
+  OFF
 )
 OPTION ( ASSIMP_COVERALLS
   "Enable this to measure test coverage."
@@ -226,6 +227,7 @@ ENDIF()
 
 IF(ASSIMP_DOUBLE_PRECISION)
   ADD_DEFINITIONS(-DASSIMP_DOUBLE_PRECISION)
+  message("ASSIMP_DOUBLE_PRECISION is ON")
 ENDIF()
 
 INCLUDE_DIRECTORIES( BEFORE
@@ -713,9 +715,9 @@ IF ( ASSIMP_BUILD_SAMPLES )
   ADD_SUBDIRECTORY( samples/SimpleOpenGL/ )
 ENDIF ()
 
-IF ( ASSIMP_BUILD_TESTS )
-  ADD_SUBDIRECTORY( test/ )
-ENDIF ()
+#IF ( ASSIMP_BUILD_TESTS )
+#  ADD_SUBDIRECTORY( test/ )
+#ENDIF ()
 
 # Generate a pkg-config .pc, revision.h, and config.h for the Assimp library.
 CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/assimp.pc.in" "${PROJECT_BINARY_DIR}/assimp.pc" @ONLY )
