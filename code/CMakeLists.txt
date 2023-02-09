@@ -1,4 +1,4 @@
-# Open Asset Import Library (assimp)
+# Open Asset Import Library (assimp / dassimp)
 # ----------------------------------------------------------------------
 # Copyright (c) 2006-2022, assimp team
 #
@@ -1173,38 +1173,38 @@ IF (ASSIMP_BUILD_DRACO)
   ADD_DEFINITIONS( -DASSIMP_ENABLE_DRACO )
 ENDIF()
 
-ADD_LIBRARY( assimp ${assimp_src} )
-ADD_LIBRARY(assimp::assimp ALIAS assimp)
+ADD_LIBRARY( dassimp ${assimp_src} )
+ADD_LIBRARY(dassimp::dassimp ALIAS dassimp)
 
 # Add or remove dllexport tags depending on the library type.
 IF (BUILD_SHARED_LIBS)
-  TARGET_COMPILE_DEFINITIONS(assimp PRIVATE ASSIMP_BUILD_DLL_EXPORT)
+  TARGET_COMPILE_DEFINITIONS(dassimp PRIVATE ASSIMP_BUILD_DLL_EXPORT)
 ELSE ()
-  TARGET_COMPILE_DEFINITIONS(assimp PRIVATE OPENDDL_STATIC_LIBARY)
+  TARGET_COMPILE_DEFINITIONS(dassimp PRIVATE OPENDDL_STATIC_LIBARY)
 ENDIF ()
 
-TARGET_USE_COMMON_OUTPUT_DIRECTORY(assimp)
+TARGET_USE_COMMON_OUTPUT_DIRECTORY(dassimp)
 
 IF (ASSIMP_WARNINGS_AS_ERRORS)
   MESSAGE(STATUS "Treating all warnings as errors (for assimp library only)")
   IF (MSVC)
-    TARGET_COMPILE_OPTIONS(assimp PRIVATE /W4 /WX)
+    TARGET_COMPILE_OPTIONS(dassimp PRIVATE /W4 /WX)
   ELSE()
-    TARGET_COMPILE_OPTIONS(assimp PRIVATE -Wall -Werror)
+    TARGET_COMPILE_OPTIONS(dassimp PRIVATE -Wall -Werror)
   ENDIF()
 ENDIF()
 
 # adds C_FLAGS required to compile zip.c on old GCC 4.x compiler
-TARGET_COMPILE_FEATURES(assimp PRIVATE c_std_99)
+TARGET_COMPILE_FEATURES(dassimp PRIVATE c_std_99)
 
-TARGET_INCLUDE_DIRECTORIES ( assimp PUBLIC
+TARGET_INCLUDE_DIRECTORIES ( dassimp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>
   $<INSTALL_INTERFACE:${ASSIMP_INCLUDE_INSTALL_DIR}>
 )
 
 IF(ASSIMP_HUNTER_ENABLED)
-  TARGET_LINK_LIBRARIES(assimp
+  TARGET_LINK_LIBRARIES(dassimp
       PUBLIC
       polyclipping::polyclipping
       openddlparser::openddl_parser
@@ -1217,29 +1217,29 @@ IF(ASSIMP_HUNTER_ENABLED)
       stb::stb
   )
   if(TARGET zip::zip)
-    target_link_libraries(assimp PUBLIC zip::zip)
+    target_link_libraries(dassimp PUBLIC zip::zip)
   endif()
 
   if (ASSIMP_BUILD_DRACO)
-    target_link_libraries(assimp PUBLIC ${draco_LIBRARIES})
+    target_link_libraries(dassimp PUBLIC ${draco_LIBRARIES})
   endif()
 ELSE()
-  TARGET_LINK_LIBRARIES(assimp ${ZLIB_LIBRARIES} ${OPENDDL_PARSER_LIBRARIES})
+  TARGET_LINK_LIBRARIES(dassimp ${ZLIB_LIBRARIES} ${OPENDDL_PARSER_LIBRARIES})
   if (ASSIMP_BUILD_DRACO)
-    target_link_libraries(assimp ${draco_LIBRARIES})
+    target_link_libraries(dassimp ${draco_LIBRARIES})
   endif()
 ENDIF()
 
 if(ASSIMP_ANDROID_JNIIOSYSTEM)
   set(ASSIMP_ANDROID_JNIIOSYSTEM_PATH port/AndroidJNI)
   add_subdirectory(../${ASSIMP_ANDROID_JNIIOSYSTEM_PATH}/ ../${ASSIMP_ANDROID_JNIIOSYSTEM_PATH}/)
-  target_link_libraries(assimp android_jniiosystem)
+  target_link_libraries(dassimp android_jniiosystem)
 endif()
 
 IF (ASSIMP_BUILD_NONFREE_C4D_IMPORTER)
-  TARGET_LINK_LIBRARIES(assimp optimized ${C4D_RELEASE_LIBRARIES})
-  TARGET_LINK_LIBRARIES(assimp debug ${C4D_DEBUG_LIBRARIES})
-  TARGET_LINK_LIBRARIES(assimp ${C4D_EXTRA_LIBRARIES})
+  TARGET_LINK_LIBRARIES(dassimp optimized ${C4D_RELEASE_LIBRARIES})
+  TARGET_LINK_LIBRARIES(dassimp debug ${C4D_DEBUG_LIBRARIES})
+  TARGET_LINK_LIBRARIES(dassimp ${C4D_EXTRA_LIBRARIES})
 ENDIF ()
 
 if( MSVC )
@@ -1271,25 +1271,25 @@ if( MSVC )
       set(MSVC_PREFIX "vc150")
     endif()
   endif()
-  set(LIBRARY_SUFFIX "${ASSIMP_LIBRARY_SUFFIX}-${MSVC_PREFIX}-mt" CACHE STRING "the suffix for the assimp windows library")
+  set(LIBRARY_SUFFIX "${ASSIMP_LIBRARY_SUFFIX}-${MSVC_PREFIX}-mt" CACHE STRING "the suffix for the dassimp windows library")
 endif()
 
 if (MINGW)
-  set(LIBRARY_SUFFIX "-${ASSIMP_SOVERSION}" CACHE STRING "the suffix for the assimp MinGW shared library")
-  SET_TARGET_PROPERTIES( assimp PROPERTIES
-    ARCHIVE_OUTPUT_NAME assimp
+  set(LIBRARY_SUFFIX "-${ASSIMP_SOVERSION}" CACHE STRING "the suffix for the dassimp MinGW shared library")
+  SET_TARGET_PROPERTIES( dassimp PROPERTIES
+    ARCHIVE_OUTPUT_NAME dassimp
   )
   if (NOT BUILD_SHARED_LIBS)
-    TARGET_LINK_LIBRARIES ( assimp -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lwinpthread ) # winpthread is for libminizip.
+    TARGET_LINK_LIBRARIES ( dassimp -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lwinpthread ) # winpthread is for libminizip.
   endif ()
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "WindowsStore")
-    target_compile_definitions(assimp PUBLIC WindowsStore)
-    TARGET_LINK_LIBRARIES(assimp advapi32)
+    target_compile_definitions(dassimp PUBLIC WindowsStore)
+    TARGET_LINK_LIBRARIES(dassimp advapi32)
 endif()
 
-SET_TARGET_PROPERTIES( assimp PROPERTIES
+SET_TARGET_PROPERTIES( dassimp PROPERTIES
   VERSION ${ASSIMP_VERSION}
   SOVERSION ${ASSIMP_SOVERSION} # use full version
   OUTPUT_NAME assimp${LIBRARY_SUFFIX}
@@ -1297,29 +1297,29 @@ SET_TARGET_PROPERTIES( assimp PROPERTIES
 
 if (APPLE)
   if (ASSIMP_BUILD_FRAMEWORK)
-    SET_TARGET_PROPERTIES( assimp PROPERTIES
+    SET_TARGET_PROPERTIES( dassimp PROPERTIES
       FRAMEWORK TRUE
       FRAMEWORK_VERSION C
-      MACOSX_FRAMEWORK_IDENTIFIER net.sf.assimp
+      MACOSX_FRAMEWORK_IDENTIFIER net.sf.dassimp
       PUBLIC_HEADER "${PUBLIC_HEADERS}"
     )
 
     # PUBLIC_HEADER option does not support directory structure creation
-    # add ./Compiler/*.h to assimp.framework via copy command
-    ADD_CUSTOM_COMMAND(TARGET assimp POST_BUILD
+    # add ./Compiler/*.h to dassimp.framework via copy command
+    ADD_CUSTOM_COMMAND(TARGET dassimp POST_BUILD
       COMMAND "${CMAKE_COMMAND}" -E copy_directory
          "${HEADER_PATH}/Compiler"
-         assimp.framework/Headers/Compiler
+         dassimp.framework/Headers/Compiler
       COMMENT "Copying public ./Compiler/ header files to framework bundle's Headers/Compiler/")
   ENDIF()
 ENDIF()
 
 # Build against external unzip, or add ../contrib/unzip so
-# assimp can #include "unzip.h"
+# dassimp can #include "unzip.h"
 IF(NOT ASSIMP_HUNTER_ENABLED)
   if (UNZIP_FOUND)
     INCLUDE_DIRECTORIES(${UNZIP_INCLUDE_DIRS})
-    TARGET_LINK_LIBRARIES(assimp ${UNZIP_LIBRARIES})
+    TARGET_LINK_LIBRARIES(dassimp ${UNZIP_LIBRARIES})
   else ()
     INCLUDE_DIRECTORIES("../")
   endif ()
@@ -1327,11 +1327,11 @@ ENDIF()
 
 # Add RT-extension library for glTF importer with Open3DGC-compression.
 IF (RT_FOUND AND ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC)
-  TARGET_LINK_LIBRARIES(assimp ${RT_LIBRARY})
+  TARGET_LINK_LIBRARIES(dassimp ${RT_LIBRARY})
 ENDIF ()
 
 
-INSTALL( TARGETS assimp
+INSTALL( TARGETS dassimp
   EXPORT "${TARGETS_EXPORT_NAME}"
   LIBRARY DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
   ARCHIVE DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP-DEV_COMPONENT}
@@ -1339,41 +1339,41 @@ INSTALL( TARGETS assimp
   FRAMEWORK DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
   INCLUDES DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}
 )
-INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp COMPONENT assimp-dev)
-INSTALL( FILES ${COMPILER_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp/Compiler COMPONENT assimp-dev)
+INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/dassimp COMPONENT dassimp-dev)
+INSTALL( FILES ${COMPILER_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/dassimp/Compiler COMPONENT dassimp-dev)
 
 if (ASSIMP_ANDROID_JNIIOSYSTEM)
   INSTALL(FILES ${HEADER_PATH}/${ASSIMP_ANDROID_JNIIOSYSTEM_PATH}/AndroidJNIIOSystem.h
     DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}
-    COMPONENT assimp-dev)
+    COMPONENT dassimp-dev)
 ENDIF()
 
 if(MSVC AND ASSIMP_INSTALL_PDB)
   # When only the static library is built, these properties must
   # be set to ensure the static lib .pdb is staged for installation.
   IF(NOT BUILD_SHARED_LIBS)
-    SET_TARGET_PROPERTIES( assimp PROPERTIES
+    SET_TARGET_PROPERTIES( dassimp PROPERTIES
       COMPILE_PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMPILE_PDB_NAME assimp${LIBRARY_SUFFIX}
-      COMPILE_PDB_NAME_DEBUG assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}
+      COMPILE_PDB_NAME dassimp${LIBRARY_SUFFIX}
+      COMPILE_PDB_NAME_DEBUG dassimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}
     )
   ENDIF()
 
   IF(CMAKE_GENERATOR MATCHES "^Visual Studio")
-    install(FILES ${Assimp_BINARY_DIR}/code/Debug/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
+    install(FILES ${Assimp_BINARY_DIR}/code/Debug/dassimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
       DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
       CONFIGURATIONS Debug
     )
-    install(FILES ${Assimp_BINARY_DIR}/code/RelWithDebInfo/assimp${LIBRARY_SUFFIX}.pdb
+    install(FILES ${Assimp_BINARY_DIR}/code/RelWithDebInfo/dassimp${LIBRARY_SUFFIX}.pdb
       DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
       CONFIGURATIONS RelWithDebInfo
     )
   ELSE()
-    install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
+    install(FILES ${Assimp_BINARY_DIR}/code/dassimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
       DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
       CONFIGURATIONS Debug
     )
-    install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}.pdb
+    install(FILES ${Assimp_BINARY_DIR}/code/dassimp${LIBRARY_SUFFIX}.pdb
       DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
       CONFIGURATIONS RelWithDebInfo
     )
